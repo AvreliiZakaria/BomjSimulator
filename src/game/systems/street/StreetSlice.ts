@@ -1,5 +1,6 @@
 import * as Phaser from 'phaser';
 import { PALETTE } from '../../config/palette';
+import { mixColor } from '../../utils/color';
 import { Rng } from '../../utils/Rng';
 
 export class StreetSlice {
@@ -9,51 +10,82 @@ export class StreetSlice {
   private readonly scene: Phaser.Scene;
   private readonly root: Phaser.GameObjects.Container;
   private readonly rng = new Rng(8831);
-  private readonly animated: Phaser.GameObjects.GameObject[] = [];
+  private readonly animated: Phaser.GameObjects.Ellipse[] = [];
 
   public constructor(scene: Phaser.Scene, viewportWidth: number, viewportHeight: number) {
-    this.scene = scene; this.worldWidth = Math.max(viewportWidth * 2.8, 2200);
-    const unit = Math.max(5, viewportHeight / 100); const ground = viewportHeight * 0.63;
-    this.walkTop = ground - unit * 2; this.walkBottom = ground + unit * 16;
-    this.root = scene.add.container(0, 0); this.root.setDepth(-100);
+    this.scene = scene;
+    this.worldWidth = Math.max(viewportWidth * 2.8, 2200);
+    const unit = Math.max(5, viewportHeight / 100);
+    const ground = viewportHeight * 0.63;
+    this.walkTop = ground - unit * 2;
+    this.walkBottom = ground + unit * 16;
+    this.root = scene.add.container(0, 0).setDepth(-100);
     this.draw(viewportWidth, viewportHeight, unit, ground);
   }
 
   public update(): void {
-    for (const object of this.animated) object.setAlpha(0.84 + Math.sin(this.scene.time.now * 0.002 + object.x) * 0.08);
+    for (const object of this.animated) {
+      object.setAlpha(0.84 + Math.sin(this.scene.time.now * 0.002 + object.x) * 0.08);
+    }
   }
+
   public destroy(): void { this.root.destroy(true); }
 
   private draw(viewportWidth: number, height: number, unit: number, ground: number): void {
     const g = this.scene.add.graphics();
-    for (let i = 0; i < 24; i += 1) { const t = i / 23; g.fillStyle(i < 14 ? Phaser.Display.Color.Interpolate.ColorWithColor(Phaser.Display.Color.ValueToColor(PALETTE.skyTop), Phaser.Display.Color.ValueToColor(PALETTE.skyHorizon), 23, i).color : PALETTE.skyHorizon, 1); g.fillRect(0, t * ground, this.worldWidth, ground / 23 + 2); }
+    for (let i = 0; i < 24; i += 1) {
+      const t = i / 23;
+      g.fillStyle(mixColor(PALETTE.skyTop, PALETTE.skyHorizon, t), 1);
+      g.fillRect(0, t * ground, this.worldWidth, ground / 23 + 2);
+    }
     g.fillStyle(PALETTE.buildingFar, 1); g.fillRect(0, ground - 130, this.worldWidth, 132);
-    for (let x = 30; x < this.worldWidth; x += 170) { const h = this.rng.range(70, 180); g.fillStyle(PALETTE.buildingMid, 1); g.fillRect(x, ground - h, 135, h); for (let wy = ground - h + 28; wy < ground - 12; wy += 30) { g.fillStyle(PALETTE.windowWarm, this.rng.range(0.15, 0.55)); g.fillRect(x + 24, wy, 12, 9); g.fillRect(x + 72, wy + 5, 12, 9); } }
+    for (let x = 30; x < this.worldWidth; x += 170) {
+      const h = this.rng.range(70, 180);
+      g.fillStyle(PALETTE.buildingMid, 1); g.fillRect(x, ground - h, 135, h);
+      for (let wy = ground - h + 28; wy < ground - 12; wy += 30) {
+        g.fillStyle(PALETTE.windowWarm, this.rng.range(0.15, 0.55)); g.fillRect(x + 24, wy, 12, 9); g.fillRect(x + 72, wy + 5, 12, 9);
+      }
+    }
     g.fillStyle(PALETTE.sidewalk, 1); g.fillRect(0, ground, this.worldWidth, height - ground);
     g.fillStyle(PALETTE.curb, 1); g.fillRect(0, ground, this.worldWidth, 9);
     g.fillStyle(PALETTE.road, 1); g.fillRect(0, ground + 88, this.worldWidth, height - ground);
     g.fillStyle(PALETTE.roadLight, 0.22); for (let x = 0; x < this.worldWidth; x += 120) g.fillRect(x, ground + 180, 58, 4);
     this.root.add(g);
-    this.drawBuildings(ground, unit); this.drawStreetProps(ground, unit); this.drawFog(viewportWidth, height, unit, ground);
+    this.drawBuildings(ground); this.drawStreetProps(ground); this.drawFog(viewportWidth, unit, ground);
   }
 
-  private drawBuildings(ground: number, unit: number): void {
+  private drawBuildings(ground: number): void {
     const g = this.scene.add.graphics();
-    for (let x = 100; x < this.worldWidth; x += 390) { const h = 150 + (x % 3) * 30; g.fillStyle(PALETTE.buildingNear, 1); g.fillRect(x, ground - h, 300, h); g.fillStyle(PALETTE.roofDetail, 1); g.fillRect(x + 20, ground - h - 10, 80, 10); g.fillStyle(PALETTE.windowDark, 1); for (let wy = ground - h + 35; wy < ground - 25; wy += 42) { g.fillRect(x + 35, wy, 30, 20); g.fillRect(x + 150, wy, 30, 20); g.fillRect(x + 250, wy, 22, 20); } }
+    for (let x = 100; x < this.worldWidth; x += 390) {
+      const h = 150 + (x % 3) * 30;
+      g.fillStyle(PALETTE.buildingNear, 1); g.fillRect(x, ground - h, 300, h);
+      g.fillStyle(PALETTE.roofDetail, 1); g.fillRect(x + 20, ground - h - 10, 80, 10);
+      g.fillStyle(PALETTE.windowDark, 1);
+      for (let wy = ground - h + 35; wy < ground - 25; wy += 42) { g.fillRect(x + 35, wy, 30, 20); g.fillRect(x + 150, wy, 30, 20); g.fillRect(x + 250, wy, 22, 20); }
+    }
     this.root.add(g);
     const signs: Array<{ x: number; text: string; color: number }> = [{ x: 230, text: 'ЗАКРЫТО', color: 0x6b6870 }, { x: 650, text: 'ПРОДУКТЫ', color: PALETTE.accent }, { x: 1090, text: 'ПОДЪЕЗД 7', color: 0x9fb4c7 }];
-    for (const sign of signs) { const panel = this.scene.add.rectangle(sign.x, ground - 65, 130, 28, 0x101217, 0.95).setStrokeStyle(1, sign.color, 0.7); const label = this.scene.add.text(sign.x, ground - 65, sign.text, { fontFamily: 'system-ui', fontSize: '12px', color: Phaser.Display.Color.IntegerToColor(sign.color).rgba }).setOrigin(0.5); this.root.add([panel, label]); }
+    for (const sign of signs) {
+      const panel = this.scene.add.rectangle(sign.x, ground - 65, 130, 28, 0x101217, 0.95).setStrokeStyle(1, sign.color, 0.7);
+      const label = this.scene.add.text(sign.x, ground - 65, sign.text, { fontFamily: 'system-ui', fontSize: '12px', color: Phaser.Display.Color.IntegerToColor(sign.color).rgba }).setOrigin(0.5);
+      this.root.add([panel, label]);
+    }
   }
 
-  private drawStreetProps(ground: number, unit: number): void {
+  private drawStreetProps(ground: number): void {
     for (let x = 180; x < this.worldWidth; x += 430) {
-      const lamp = this.scene.add.container(x, ground); const pole = this.scene.add.graphics(); pole.fillStyle(PALETTE.silhouette, 1); pole.fillRect(-3, -240, 6, 240); pole.fillRect(-3, -240, 42, 6); const glow = this.scene.add.ellipse(39, -229, 100, 100, PALETTE.lampGlow, 0.08); const bulb = this.scene.add.ellipse(39, -229, 12, 8, PALETTE.lamp, 0.75); lamp.add([glow, pole, bulb]); this.root.add(lamp); this.animated.push(glow);
-      const bin = this.scene.add.rectangle(x + 105, ground - 17, 32, 34, PALETTE.silhouette, 0.95); this.root.add(bin);
+      const lamp = this.scene.add.container(x, ground); const pole = this.scene.add.graphics();
+      pole.fillStyle(PALETTE.silhouette, 1); pole.fillRect(-3, -240, 6, 240); pole.fillRect(-3, -240, 42, 6);
+      const glow = this.scene.add.ellipse(39, -229, 100, 100, PALETTE.lampGlow, 0.08); const bulb = this.scene.add.ellipse(39, -229, 12, 8, PALETTE.lamp, 0.75);
+      lamp.add([glow, pole, bulb]); this.root.add(lamp); this.animated.push(glow);
+      this.root.add(this.scene.add.rectangle(x + 105, ground - 17, 32, 34, PALETTE.silhouette, 0.95));
     }
     const bench = this.scene.add.graphics(); bench.fillStyle(PALETTE.silhouette, 1); bench.fillRect(800, ground - 32, 120, 9); bench.fillRect(810, ground - 22, 8, 25); bench.fillRect(900, ground - 22, 8, 25); this.root.add(bench);
-    const stop = this.scene.add.rectangle(1360, ground - 66, 90, 110, 0x15181d, 0.8).setStrokeStyle(1, 0x9fb4c7, 0.4); this.root.add(stop);
+    this.root.add(this.scene.add.rectangle(1360, ground - 66, 90, 110, 0x15181d, 0.8).setStrokeStyle(1, 0x9fb4c7, 0.4));
     const car = this.scene.add.container(1640, ground + 74); const carBody = this.scene.add.graphics(); carBody.fillStyle(0x12151b, 1); carBody.fillRoundedRect(-80, -33, 160, 33, 7); carBody.fillStyle(0x3a414b, 0.7); carBody.fillRect(-44, -57, 88, 25); car.add(carBody); this.root.add(car);
   }
 
-  private drawFog(viewportWidth: number, height: number, unit: number, ground: number): void { const count = 2; for (let i = 0; i < count; i += 1) { const fog = this.scene.add.ellipse(viewportWidth * (0.25 + i * 0.7), ground + unit * 5, viewportWidth * 0.9, unit * 16, PALETTE.fog, 0.07); fog.setScrollFactor(0.55); this.root.add(fog); } }
+  private drawFog(viewportWidth: number, unit: number, ground: number): void {
+    for (let i = 0; i < 2; i += 1) { const fog = this.scene.add.ellipse(viewportWidth * (0.25 + i * 0.7), ground + unit * 5, viewportWidth * 0.9, unit * 16, PALETTE.fog, 0.07); fog.setScrollFactor(0.55); this.root.add(fog); }
+  }
 }

@@ -1,5 +1,6 @@
 import { Emitter } from './Emitter';
 import type { AppearancePreset, ClothingPreset } from '../data/game/player';
+import type { GameTime } from '../game/systems/time/GameTimeService';
 
 export type AppEvents = {
   'preload:progress': number;
@@ -9,6 +10,7 @@ export type AppEvents = {
   'character:enter': void;
   'character:leave': void;
   'game:enter': { day: number; money: number; time: { hour: number; minute: number }; district: string; name: string };
+  'game:time': GameTime;
   'game:leave': void;
   'ui:continue': void;
   'ui:new-game': void;

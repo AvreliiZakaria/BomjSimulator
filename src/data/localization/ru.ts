@@ -1,0 +1,75 @@
+export const ruStrings = {
+  'brand.title': 'НУЛЬ',
+  'brand.tagline': 'ВЫЖИВИ. ЗАРАБОТАЙ. ПОДНИМИСЬ.',
+
+  'common.close': 'Закрыть',
+  'common.cancel': 'ОТМЕНА',
+  'common.on': 'ВКЛ',
+  'common.off': 'ВЫКЛ',
+
+  'loading.status': 'ЗАГРУЗКА',
+
+  'menu.continue': 'ПРОДОЛЖИТЬ',
+  'menu.continue.empty': 'Сохранение не найдено',
+  'menu.newGame': 'НОВАЯ ИГРА',
+  'menu.character': 'ПЕРСОНАЖ',
+  'menu.rating': 'РЕЙТИНГ',
+  'menu.collection': 'КОЛЛЕКЦИЯ',
+  'menu.shop': 'МАГАЗИН',
+  'menu.news': 'НОВОСТИ',
+  'menu.settings': 'НАСТРОЙКИ',
+  'menu.version': 'v{version} · ранний прототип',
+
+  'newGame.title': 'НАЧАТЬ НОВУЮ ИГРУ?',
+  'newGame.text': 'Ты начинаешь с 17 ₽ и практически без имущества.',
+  'newGame.confirm': 'НАЧАТЬ',
+
+  'wip.title': 'РАЗДЕЛ ЗАКРЫТ',
+  'wip.text': 'Раздел находится в разработке.',
+  'wip.hint': 'Загляни сюда в одном из следующих обновлений.',
+
+  'settings.title': 'НАСТРОЙКИ',
+  'settings.section.graphics': 'ГРАФИКА',
+  'settings.section.sound': 'ЗВУК',
+  'settings.section.interface': 'ИНТЕРФЕЙС',
+  'settings.section.accessibility': 'ДОСТУПНОСТЬ',
+
+  'settings.quality': 'Качество',
+  'settings.quality.auto': 'Авто',
+  'settings.quality.low': 'Низкое',
+  'settings.quality.medium': 'Среднее',
+  'settings.quality.high': 'Высокое',
+
+  'settings.fps': 'FPS',
+  'settings.fps.30': '30',
+  'settings.fps.60': '60',
+  'settings.fps.note': 'Ограничение частоты кадров полностью применяется после перезапуска игры.',
+
+  'settings.volume.master': 'Общая громкость',
+  'settings.volume.music': 'Музыка',
+  'settings.volume.sfx': 'Эффекты',
+  'settings.sound.note': 'Звуковых ассетов пока нет — значения сохраняются на будущее.',
+
+  'settings.uiScale': 'Размер интерфейса',
+  'settings.uiScale.small': 'Маленький',
+  'settings.uiScale.normal': 'Обычный',
+  'settings.uiScale.large': 'Большой',
+
+  'settings.reduceMotion': 'Уменьшение анимаций',
+  'settings.reduceMotion.note': 'Системная настройка «уменьшить движение» учитывается автоматически.',
+
+  'game.day': 'ДЕНЬ {day}',
+  'game.backToMenu': 'В МЕНЮ',
+  'game.escHint': 'ESC',
+  'game.stub': 'Пустая игровая сцена. Персонаж и системы появятся на следующих этапах.',
+} as const;
+
+export const ruLoadingPhrases: readonly string[] = [
+  'Город ничего тебе не должен.',
+  'У тебя осталось 17 ₽.',
+  'После трёх лучше быть дома.',
+  'Не все голуби просто голуби.',
+  'Сегодня будет холодно.',
+  'Фонарь у перехода снова моргает.',
+  'Кто-то уже занял твою лавку.',
+];

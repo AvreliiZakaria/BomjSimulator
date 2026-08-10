@@ -16,6 +16,7 @@ export class GameScene extends Phaser.Scene {
   private gameTime: GameTimeService | null = null;
   private paused = false;
   private leaving = false;
+  private lastTimeKey = '';
   private readonly subscriptions: Array<() => void> = [];
   public constructor() { super(SceneKeys.Game); }
 
@@ -29,6 +30,7 @@ export class GameScene extends Phaser.Scene {
     this.player.setPosition(save.position.x, save.position.y);
     this.controller = new PlayerController(this);
     this.gameTime = new GameTimeService({ day: save.world.day, hour: save.world.time.hour, minute: save.world.time.minute });
+    this.lastTimeKey = `${save.world.day}:${save.world.time.hour}:${save.world.time.minute}`;
     this.cameras.main.setBounds(0, 0, this.street.worldWidth, this.scale.height);
     this.cameras.main.setScroll(this.clampCameraX(save.position.x - this.scale.width * 0.45), 0);
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
@@ -47,7 +49,9 @@ export class GameScene extends Phaser.Scene {
   public override update(_time: number, delta: number): void {
     if (!this.player || !this.controller || !this.street || !this.gameTime || this.paused) return;
     const vector = this.controller.getVector(); const moving = vector.x !== 0 || vector.y !== 0;
-    this.player.setMoving(moving); this.player.x = Phaser.Math.Clamp(this.player.x + vector.x * SPEED * delta / 1000, 30, this.street.worldWidth - 30); this.player.y = Phaser.Math.Clamp(this.player.y + vector.y * SPEED * delta / 1000, this.street.walkTop, this.street.walkBottom); this.player.updateVisual(delta); this.gameTime.update(delta); this.street.update(); const time = this.gameTime.get(); bus.emit('game:time', time);
+    this.player.setMoving(moving); this.player.x = Phaser.Math.Clamp(this.player.x + vector.x * SPEED * delta / 1000, 30, this.street.worldWidth - 30); this.player.y = Phaser.Math.Clamp(this.player.y + vector.y * SPEED * delta / 1000, this.street.walkTop, this.street.walkBottom); this.player.updateVisual(delta); this.gameTime.update(delta); this.street.update();
+    const time = this.gameTime.get(); const timeKey = `${time.day}:${time.hour}:${time.minute}`;
+    if (timeKey !== this.lastTimeKey) { this.lastTimeKey = timeKey; bus.emit('game:time', time); }
   }
 
   private togglePause(): void { if (!this.paused) bus.emit('ui:pause'); else bus.emit('ui:resume'); }

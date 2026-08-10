@@ -1,0 +1,20 @@
+{
+  "name": "nul-game",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "НУЛЬ — браузерный симулятор уличного выживания. Этап 1: фундамент и главное меню.",
+  "scripts": {
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "phaser": "4.2.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3",
+    "vite": "^6.0.7"
+  }
+}

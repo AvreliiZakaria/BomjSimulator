@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { getDevicePixelRatio } from '../../core/device';
 import type { GameSettings } from '../../services/SettingsService';
 import { PALETTE } from './palette';

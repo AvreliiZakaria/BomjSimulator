@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { bus } from '../../core/bus';
 import { isMotionEnabled, settingsService } from '../../services/SettingsService';
 import { SceneKeys } from './SceneKeys';

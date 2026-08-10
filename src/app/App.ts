@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { onSystemMotionPreferenceChange } from '../core/motion';
 import { setLocale } from '../data/localization';
 import { createGameConfig } from '../game/config/GameConfig';

@@ -1,0 +1,367 @@
+/* ==========================================================================
+   Экраны: загрузка, главное меню, HUD пустой игровой сцены.
+   Слой .screen сам по себе прозрачен для мыши — интерактив включается точечно.
+   ========================================================================== */
+
+/* ---------- Загрузочный экран ---------- */
+
+.screen--loading {
+  z-index: 10;
+  display: grid;
+  place-items: center;
+  padding: calc(var(--safe-top) + 1.5em) calc(var(--safe-right) + 1.5em)
+    calc(var(--safe-bottom) + 1.5em) calc(var(--safe-left) + 1.5em);
+  background: radial-gradient(120% 90% at 50% 38%, #15171d 0%, #0b0c0f 62%);
+  pointer-events: auto;
+  opacity: 1;
+  transition: opacity 500ms var(--ease);
+}
+
+.screen--loading.is-leaving {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.1em;
+  width: min(22em, 86vw);
+  text-align: center;
+}
+
+.loading__title {
+  margin: 0;
+  font-size: clamp(2.6em, 9vw, 4em);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: 0.4em;
+  text-indent: 0.4em;
+  color: var(--c-text);
+  animation: nul-rise 760ms var(--ease) both;
+}
+
+.loading__bar {
+  width: 100%;
+  height: 3px;
+  background: rgba(232, 229, 222, 0.1);
+  overflow: hidden;
+}
+
+.loading__bar-fill {
+  width: 100%;
+  height: 100%;
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, var(--c-accent-deep), var(--c-accent-bright));
+  transition: transform 160ms linear;
+}
+
+.loading__status {
+  margin: 0;
+  font-size: 0.66em;
+  font-weight: 600;
+  letter-spacing: 0.34em;
+  text-indent: 0.34em;
+  color: var(--c-text-faint);
+}
+
+.loading__phrase {
+  margin: 0;
+  min-height: 2.8em;
+  font-size: 0.88em;
+  color: var(--c-text-dim);
+  animation: nul-fade 1100ms var(--ease) 260ms both;
+}
+
+/* ---------- Главное меню ---------- */
+
+.screen--menu {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--dur-slow) var(--ease);
+}
+
+.screen--menu.is-ready {
+  opacity: 1;
+}
+
+.screen--menu.is-leaving {
+  opacity: 0;
+}
+
+/* Затемнение под меню, чтобы текст читался поверх города */
+.screen--menu::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    100deg,
+    rgba(6, 7, 9, 0.94) 0%,
+    rgba(6, 7, 9, 0.78) 24%,
+    rgba(6, 7, 9, 0.28) 48%,
+    rgba(6, 7, 9, 0) 66%
+  );
+}
+
+.menu {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 1.5em;
+  width: min(24em, 42vw);
+  min-width: 17em;
+  height: 100%;
+  padding: calc(var(--safe-top) + 2em) 1.5em calc(var(--safe-bottom) + 2em)
+    calc(var(--safe-left) + clamp(1.4em, 5vw, 4.5em));
+  pointer-events: auto;
+}
+
+.menu > * {
+  opacity: 0;
+  transform: translateY(14px);
+  transition:
+    opacity var(--dur-slow) var(--ease),
+    transform var(--dur-slow) var(--ease);
+}
+
+.screen--menu.is-ready .menu > * {
+  opacity: 1;
+  transform: none;
+}
+
+.screen--menu.is-ready .menu > *:nth-child(1) {
+  transition-delay: 60ms;
+}
+
+.screen--menu.is-ready .menu > *:nth-child(2) {
+  transition-delay: 170ms;
+}
+
+.screen--menu.is-ready .menu > *:nth-child(3) {
+  transition-delay: 250ms;
+}
+
+.screen--menu.is-ready .menu > *:nth-child(4) {
+  transition-delay: 330ms;
+}
+
+.menu__brand {
+  display: block;
+}
+
+.menu__logo {
+  margin: 0;
+  font-size: clamp(2.8em, 5.6vw, 4.4em);
+  font-weight: 800;
+  line-height: 0.95;
+  letter-spacing: 0.16em;
+  color: var(--c-text);
+  text-shadow: 0 0 46px rgba(226, 166, 72, 0.2);
+}
+
+.menu__tagline {
+  margin: 0.75em 0 0;
+  font-size: 0.66em;
+  font-weight: 650;
+  letter-spacing: 0.26em;
+  color: var(--c-accent);
+}
+
+.menu__primary {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6em;
+}
+
+.menu__note {
+  margin: 0.1em 0 0;
+  font-size: 0.72em;
+  letter-spacing: 0.05em;
+  color: var(--c-text-faint);
+}
+
+.menu__grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0.5em;
+}
+
+.menu__grid > *:nth-child(-n + 3) {
+  grid-column: span 2;
+}
+
+.menu__grid > *:nth-child(n + 4) {
+  grid-column: span 3;
+}
+
+.menu__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1em;
+}
+
+.menu__version {
+  font-family: var(--font-mono);
+  font-size: 0.66em;
+  letter-spacing: 0.04em;
+  color: var(--c-text-faint);
+  white-space: nowrap;
+}
+
+/* Телефон и узкие экраны: меню уезжает вниз, в зону большого пальца */
+@media (max-width: 760px) {
+  .screen--menu::before {
+    background: linear-gradient(
+      180deg,
+      rgba(6, 7, 9, 0.7) 0%,
+      rgba(6, 7, 9, 0.1) 26%,
+      rgba(6, 7, 9, 0.6) 58%,
+      rgba(6, 7, 9, 0.96) 100%
+    );
+  }
+
+  .menu {
+    width: 100%;
+    min-width: 0;
+    justify-content: flex-end;
+    gap: 1.1em;
+    padding: calc(var(--safe-top) + 1.4em) calc(var(--safe-right) + 1.1em)
+      calc(var(--safe-bottom) + 1.3em) calc(var(--safe-left) + 1.1em);
+  }
+
+  .menu__brand {
+    margin-bottom: auto;
+    padding-top: 1.5em;
+  }
+
+  .menu__logo {
+    font-size: clamp(2.6em, 15vw, 3.6em);
+  }
+
+  .menu__tagline {
+    font-size: 0.62em;
+    letter-spacing: 0.2em;
+  }
+}
+
+/* Телефон в landscape: всё компактнее, ничего не выходит за экран */
+@media (orientation: landscape) and (max-height: 560px) {
+  .menu {
+    width: min(30em, 62vw);
+    gap: 0.75em;
+    justify-content: center;
+    padding-top: calc(var(--safe-top) + 0.7em);
+    padding-bottom: calc(var(--safe-bottom) + 0.7em);
+  }
+
+  .menu__brand {
+    margin-bottom: 0;
+    padding-top: 0;
+  }
+
+  .menu__logo {
+    font-size: 2.3em;
+  }
+
+  .menu__tagline {
+    margin-top: 0.4em;
+    font-size: 0.58em;
+  }
+
+  .menu__grid {
+    gap: 0.4em;
+  }
+
+  .btn--tile {
+    min-height: 3.5em;
+    padding: 0.5em 0.35em;
+    font-size: 0.58em;
+  }
+
+  .btn--tile .btn__icon {
+    width: 1.4em;
+    height: 1.4em;
+  }
+}
+
+/* ---------- HUD пустой игровой сцены ---------- */
+
+.screen--game {
+  z-index: 2;
+  opacity: 0;
+  transition: opacity var(--dur) var(--ease);
+}
+
+.screen--game.is-ready {
+  opacity: 1;
+}
+
+.screen--game.is-leaving {
+  opacity: 0;
+}
+
+.hud__top {
+  position: absolute;
+  top: calc(var(--safe-top) + 1em);
+  left: calc(var(--safe-left) + 1em);
+  pointer-events: auto;
+}
+
+.hud__day {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+
+.hud__day-value {
+  font-size: clamp(2em, 7vw, 3.2em);
+  font-weight: 800;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+  color: var(--c-text);
+  text-shadow: 0 10px 44px rgba(0, 0, 0, 0.85);
+  animation: nul-rise 900ms var(--ease) both;
+}
+
+.hud__stub {
+  position: absolute;
+  left: 50%;
+  bottom: calc(var(--safe-bottom) + 1.3em);
+  width: min(30em, 84vw);
+  margin: 0;
+  transform: translateX(-50%);
+  text-align: center;
+  font-size: 0.76em;
+  color: var(--c-text-faint);
+}
+
+/* ---------- Анимации ---------- */
+
+@keyframes nul-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes nul-fade {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}

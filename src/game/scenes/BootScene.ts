@@ -1,4 +1,4 @@
-import Phaser from 'phaser';
+import * as Phaser from 'phaser';
 import { SceneKeys } from './SceneKeys';
 
 /** Первичная инициализация. Ничего тяжёлого здесь быть не должно. */

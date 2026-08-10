@@ -1,19 +1,12 @@
 import { defineConfig } from 'vite';
 
 /**
- * Конфигурация сборки.
- *
- * Важно: у ESM-сборки Phaser 4 нет default-экспорта, поэтому `import Phaser from 'phaser'`
- * ломает production build. Алиас переводит импорты на UMD-бандл, который корректно
- * интеропится и с Vite dev-сервером, и с Rollup.
+ * У Phaser 4 в package.json объявлен только корневой exports-путь,
+ * поэтому никаких алиасов на dist/ быть не должно: пакет импортируется как есть,
+ * а в коде используется namespace-импорт (`import * as Phaser from 'phaser'`).
  */
 export default defineConfig({
   base: './',
-  resolve: {
-    alias: {
-      phaser: 'phaser/dist/phaser.js',
-    },
-  },
   server: {
     host: true,
     port: 5173,

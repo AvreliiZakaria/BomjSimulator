@@ -1,2 +1,27 @@
-import { bus } from '../../core/bus'; import type { LootResult } from '../../game/systems/loot/LootService'; import { createButton } from '../components/Button'; import { el,nextFrame,removeAfter } from '../dom';
-export class InteractionResultScreen { private readonly root:HTMLElement; public constructor(result:LootResult){const actions:HTMLElement[]=[];if(result.kind==='food'||result.kind==='yogurt')actions.push(createButton({label:'СЪЕСТЬ',variant:'primary',onClick:()=>bus.emit('ui:loot-eat')}).element);actions.push(createButton({label:'ЗАКРЫТЬ',variant:'ghost',onClick:()=>bus.emit('ui:loot-close')}).element);this.root=el('div',{class:'screen screen--result'},[el('article',{class:'result-card'},[el('div',{class:'eyebrow',text:'НАХОДКА'}),el('h2',{class:'result-card__title',text:result.title}),el('p',{class:'text',text:result.description}),result.money?el('p',{class:'result-card__gain',text:`+${result.money} ₽`}):el('span'),el('div',{class:'result-card__actions'},actions)])]);}public mount(parent:HTMLElement):void{parent.append(this.root);nextFrame(()=>this.root.classList.add('is-ready'));}public unmount():void{this.root.classList.add('is-leaving');removeAfter(this.root,220);}}
+import { bus } from '../../core/bus';
+import type { LootResult } from '../../game/systems/loot/LootService';
+import { createButton } from '../components/Button';
+import { el, nextFrame, removeAfter } from '../dom';
+export class InteractionResultScreen {
+  private readonly root: HTMLElement;
+  public constructor(result: LootResult) {
+    const actions: HTMLElement[] = [];
+    if (result.kind === 'food' || result.kind === 'yogurt') actions.push(createButton({ label: 'СЪЕСТЬ', variant: 'primary', onClick: () => bus.emit('ui:loot-eat') }).element);
+    actions.push(createButton({ label: 'ПРОДОЛЖИТЬ', variant: 'ghost', onClick: () => bus.emit('ui:loot-close') }).element);
+    const effects: string[] = [];
+    if (result.foodGain) effects.push(`Сытость +${result.foodGain}`);
+    if (result.hygieneChange) effects.push(`Гигиена ${result.hygieneChange}`);
+    this.root = el('div', { class: 'screen screen--result', role: 'dialog', 'aria-modal': 'true' }, [
+      el('article', { class: 'result-card' }, [
+        el('div', { class: 'eyebrow', text: 'НАХОДКА' }),
+        el('h2', { class: 'result-card__title', text: result.title }),
+        el('p', { class: 'text', text: result.description }),
+        result.money ? el('p', { class: 'result-card__gain', text: `+${result.money} ₽` }) : el('span'),
+        effects.length ? el('p', { class: 'result-card__effects', text: effects.join(' · ') }) : el('span'),
+        el('div', { class: 'result-card__actions' }, actions),
+      ]),
+    ]);
+  }
+  public mount(parent: HTMLElement): void { parent.append(this.root); nextFrame(() => this.root.classList.add('is-ready')); }
+  public unmount(): void { this.root.classList.add('is-leaving'); removeAfter(this.root, 220); }
+}

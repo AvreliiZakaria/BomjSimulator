@@ -25,7 +25,7 @@ export class UIManager {
     bus.on('menu:leave', () => { this.menu?.unmount(); this.menu = null; this.character?.unmount(); this.character = null; this.pause?.unmount(); this.pause = null; });
     bus.on('character:enter', () => { this.menu?.unmount(); this.menu = null; this.character?.unmount(); this.character = new CharacterCreationScreen(); this.character.mount(this.screenLayer); });
     bus.on('character:leave', () => { this.character?.unmount(); this.character = null; });
-    bus.on('game:enter', (data) => { this.character?.unmount(); this.character = null; this.hud?.unmount(); this.hud = new GameHudScreen(data); this.hud.mount(this.screenLayer); });
+    bus.on('game:enter', (data) => { this.character?.unmount(); this.character = null; this.hud?.unmount(); this.hud = new GameHudScreen({ ...data, time: { ...data.time, day: data.day } }); this.hud.mount(this.screenLayer); });
     bus.on('game:time', (time) => this.hud?.updateTime(time));
     bus.on('game:leave', () => { this.hud?.unmount(); this.hud = null; this.pause?.unmount(); this.pause = null; });
     bus.on('ui:pause', () => { if (!this.pause) { this.pause = new PauseScreen(this.modalLayer); this.pause.mount(this.screenLayer); } });

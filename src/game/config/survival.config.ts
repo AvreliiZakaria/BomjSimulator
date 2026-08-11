@@ -1,0 +1,15 @@
+export const SURVIVAL_CONFIG = {
+  hungerDrainPerGameHour: 2.2,
+  warmthDrainPerGameHour: 1.4,
+  hygieneDrainPerGameHour: 0.8,
+  sanityDrainPerGameHour: 0.18,
+  starvationThreshold: 18,
+  starvationHealthDamagePerHour: 1.2,
+  coldThreshold: 18,
+  coldHealthDamagePerHour: 0.6,
+  searchHygieneCost: 1,
+  restSanityGain: 3,
+  restHealthGain: 1,
+  sleep: { health: 12, hunger: -10, warmth: -8, hygiene: -5, sanity: 32 },
+  unconscious: { health: 25, moneyLossRate: 0.25, hoursForward: 3 },
+} as const;

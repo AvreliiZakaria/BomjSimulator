@@ -1,4 +1,5 @@
 export const SURVIVAL_CONFIG = {
+  newGameStartTime: { hour: 8, minute: 0 },
   hungerDrainPerGameHour: 2.2,
   warmthDrainPerGameHour: 1.4,
   hygieneDrainPerGameHour: 0.8,

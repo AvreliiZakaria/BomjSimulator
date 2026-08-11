@@ -9,10 +9,12 @@ const STORAGE_KEY = 'nul.save.v3';
 const DEFAULT_DISTRICT = 'СПАЛЬНЫЙ РАЙОН';
 const DEFAULT_SURVIVAL: SurvivalStats = { health: 100, hunger: 65, warmth: 75, hygiene: 55, sanity: 100 };
 
+type SaveTime = { hour: number; minute: number };
+function isTime(value: unknown): value is SaveTime { return isPlainObject(value) && typeof value.hour === 'number' && typeof value.minute === 'number'; }
 function isStats(value: unknown): value is SurvivalStats { if (!isPlainObject(value)) return false; return ['health', 'hunger', 'warmth', 'hygiene', 'sanity'].every((key) => typeof value[key] === 'number'); }
 function isPlayer(value: unknown): value is PlayerData { return isPlainObject(value) && typeof value.id === 'string' && typeof value.name === 'string' && isAppearancePreset(value.appearancePreset) && isClothingPreset(value.clothingPreset) && typeof value.createdAt === 'string'; }
 function isSave(value: unknown): value is SaveData {
-  if (!isPlainObject(value) || !isPlayer(value.player) || !isPlainObject(value.world) || !isPlainObject(value.world.time) || !isPlainObject(value.world.flags) || !isPlainObject(value.economy) || !isPlainObject(value.position) || !isPlainObject(value.objectives)) return false;
+  if (!isPlainObject(value) || !isPlayer(value.player) || !isPlainObject(value.world) || !isTime(value.world.time) || !isPlainObject(value.world.flags) || !isPlainObject(value.economy) || !isPlainObject(value.position) || !isPlainObject(value.objectives)) return false;
   const world = value.world;
   const time = world.time;
   const economy = value.economy;
@@ -20,7 +22,7 @@ function isSave(value: unknown): value is SaveData {
   return value.version === SAVE_VERSION && typeof value.createdAt === 'string' && typeof value.updatedAt === 'string' && typeof world.day === 'number' && typeof time.hour === 'number' && typeof time.minute === 'number' && typeof world.district === 'string' && Array.isArray(world.searchedContainers) && world.searchedContainers.every((item) => typeof item === 'string') && typeof economy.money === 'number' && typeof position.x === 'number' && typeof position.y === 'number' && isStats(value.survival) && typeof value.objectives.current === 'string' && Array.isArray(value.objectives.completed) && value.objectives.completed.every((item) => typeof item === 'string');
 }
 function migrate(value: unknown): SaveData | null {
-  if (!isPlainObject(value) || !isPlayer(value.player) || !isPlainObject(value.world) || !isPlainObject(value.world.time) || !isPlainObject(value.economy) || !isPlainObject(value.position)) return null;
+  if (!isPlainObject(value) || !isPlayer(value.player) || !isPlainObject(value.world) || !isTime(value.world.time) || !isPlainObject(value.economy) || !isPlainObject(value.position)) return null;
   const now = new Date().toISOString();
   const world = value.world;
   const time = world.time;
